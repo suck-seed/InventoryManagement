@@ -1,0 +1,29 @@
+ double grandTotal =0.0;
+    double taxAddition = 0.0;
+    double netTotal = 0.0;
+
+    //going through table ani 4th index row ko value lai grandTotal ma sum garne
+
+
+
+    for (int row = 0; row < purchaseInfo->rowCount(); ++row)
+    {
+
+        QTableWidgetItem* totalItem = purchaseInfo->item(row, 4);
+
+        // Check if the item exists
+        if (totalItem) {
+            // Add the value to the grand total
+            grandTotal += totalItem->text().toDouble();
+        }
+    }
+
+    qDebug() << "grand total is "<< grandTotal;
+
+    ui->grandtotalOut->setText(QString::number(grandTotal));
+
+    taxAddition = 0.13* grandTotal;
+    ui->taxOut->setText(QString::number(taxAddition));
+
+    netTotal = grandTotal+taxAddition;
+    ui->nettotalOut->setText(QString::number(netTotal));

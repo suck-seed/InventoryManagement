@@ -1,0 +1,106 @@
+void productupdater::on_updateProduct_clicked()
+{
+    QString productcode= ui->codeIn->text();
+    QString productname = ui->nameIn->text();
+    int productstock= ui->stockIn->text().toInt();
+    double productunitprice= ui->unitIn->text().toDouble();
+
+    qDebug() << productstock;
+
+
+    db_connection.open();
+    QSqlDatabase::database().transaction();
+
+
+    // tyo code xa ki nai check gardai, for code xa
+    QSqlQuery checkData(db_connection);
+    checkData.prepare("SELECT COUNT(*) FROM Products WHERE product_code = :productcode");
+    checkData.bindValue(":productcode", productcode);
+
+    if (checkData.exec() && checkData.next()) {
+        int count = checkData.value(0).toInt();
+        if (count == 0) {
+            // product exists gardaina
+            qDebug() << "Product doesnt exists!";
+            ui->errorDisplay->setText("Product with code doesnt exists!");
+
+            QSqlDatabase::database().rollback();
+            db_connection.close();
+            return;
+        }
+    } else {
+        // product check garda error aayo bhane
+        qDebug() << "Error checking product existence:" << checkData.lastError().text();
+        QSqlDatabase::database().rollback();
+        db_connection.close();
+        return;
+    }
+
+
+
+
+    // code exist garxa, so data insert garne
+    QSqlQuery UpdateData(db_connection);
+
+    UpdateData.prepare("UPDATE Products SET product_name = :name, product_stock = :stock, product_unit_price = :unitprice WHERE product_code = :code");
+
+    UpdateData.bindValue(":name", productname);
+    UpdateData.bindValue(":stock", productstock);
+    UpdateData.bindValue(":unitprice", productunitprice);
+    UpdateData.bindValue(":code", productcode);
+
+
+    UpdateData.exec();
+    QSqlDatabase::database().commit();
+    db_connection.close();
+
+}
+
+
+void productupdater::on_deleteProduct_clicked()
+{
+
+    QString productcode= ui->codeIn->text();
+
+
+    db_connection.open();
+    QSqlDatabase::database().transaction();
+
+
+    // tyo code xa ki nai check gardai, for code xa
+    QSqlQuery checkData(db_connection);
+    checkData.prepare("SELECT COUNT(*) FROM Products WHERE product_code = :productcode");
+    checkData.bindValue(":productcode", productcode);
+
+    if (checkData.exec() && checkData.next()) {
+        int count = checkData.value(0).toInt();
+        if (count == 0) {
+            // product exists gardaina
+            qDebug() << "Product doesnt exists!";
+            ui->errorDisplay->setText("Product with code doesnt exists!");
+
+            QSqlDatabase::database().rollback();
+            db_connection.close();
+            return;
+        }
+    } else {
+        // product check garda error aayo bhane
+        qDebug() << "Error checking product existence:" << checkData.lastError().text();
+        QSqlDatabase::database().rollback();
+        db_connection.close();
+        return;
+    }
+
+
+
+    //product exists garxa so we delete the said product
+    QSqlQuery deleteData(db_connection);
+    deleteData.prepare("DELETE FROM Products WHERE product_code = :code");
+    deleteData.bindValue(":code", productcode);
+
+    deleteData.exec();
+    QSqlDatabase::database().commit();
+    db_connection.close();
+
+}
+

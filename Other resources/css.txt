@@ -1,0 +1,14 @@
+TOP LABEL:
+font: 700 18pt "Ubuntu";
+background-color: rgb(34, 40, 49);
+color:rgb(238, 238, 238);
+
+
+ERROR BOX
+background-color:rgb(238, 238, 238) ;
+color: rgb(192, 28, 40);
+font: 9pt "DejaVu Sans Mono";
+
+
+line:
+background-color:rgb(57, 62, 70);
